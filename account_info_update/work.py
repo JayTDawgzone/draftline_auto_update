@@ -22,30 +22,37 @@ driver.find_element_by_id('main_LoginBox_btnLogin').click()
 #Itterate through rows of dataframe and perform actions for each row
 ###########################
 
-base_url = 'https://www.draftlinesmartsystem.com/companies.aspx?id='
+base_url = 'https://www.draftlinesmartsystem.com/Companies.aspx?id='
+base_url2 = 'https://www.draftlinesmartsystem.com/locations.aspx?id='
 df = pd.read_excel('emails_2020-01-23.xlsx')
 # x = 0
 for index, row in df.iterrows():
 
 
 
-    locid = str(round(row['Account ID']))
+    accid = str(round(row['Account ID']))
+    locid = str(round(row['location']))
     # address = row['Address']
     # city = row['City']
     # postal_code = row['Postal Code']
     # # phone_number = row['Phone Number']
-    locname = row['location']
+    locname = row['msgDate']
     # zone = row['Zone']
     # area = row['Area']
     # custid = str(round(row['WW Cust ID']))
-    email = row['body']
+    # email = row['body']
 
     ############################
     #Pull up Accounts Page
     ###########################
     driver.implicitly_wait(60)
-    url = base_url + locid
+    url = base_url + accid
     driver.get(url)
+    sleep(15)
+    url = base_url2 + locid
+    driver.get(url)
+    sleep(15)
+
 
     # ############################
     # #Click add account button
@@ -65,8 +72,8 @@ for index, row in df.iterrows():
     ############################
     #Click edit details button
     ###########################
-    driver.find_element_by_id('main_btnEditAccountOverview').click()
-    sleep(2)
+    # driver.find_element_by_id('main_btnEditAccountOverview').click()
+    # sleep(2)
 
 
     ############################
@@ -80,11 +87,11 @@ for index, row in df.iterrows():
     # # driver.find_element_by_id('main_ExtraAttributes1_rptAttributes_tbAttrValue_1').send_keys('sandra@huppsigns.com; cesar@huppdraft.com; nick@huppdraft.com')
     # # driver.find_element_by_id('main_ExtraAttributes1_rptAttributes_tbAttrValue_2').clear()
     # # driver.find_element_by_id('main_ExtraAttributes1_rptAttributes_tbAttrValue_2').send_keys(zone)
-    driver.find_element_by_id('main_ExtraAttributes1_rptAttributes_tbAttrValue_4').clear()
-    driver.find_element_by_id('main_ExtraAttributes1_rptAttributes_tbAttrValue_4').send_keys(email)
-    driver.find_element_by_id('main_btnSaveDetails').click()
-    driver.find_element_by_id('main_btnSaveDetails').click()
-    sleep(3)
+    # driver.find_element_by_id('main_ExtraAttributes1_rptAttributes_tbAttrValue_4').clear()
+    # driver.find_element_by_id('main_ExtraAttributes1_rptAttributes_tbAttrValue_4').send_keys(email)
+    # driver.find_element_by_id('main_btnSaveDetails').click()
+    # driver.find_element_by_id('main_btnSaveDetails').click()
+    # sleep(3)
     print(locid + " " + locname + " updated.", flush=True)
 
 

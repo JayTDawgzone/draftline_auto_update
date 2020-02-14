@@ -3,16 +3,16 @@ from time import sleep
 import pandas as pd
 
 
-username = input("Draftline Username: ")
-password = input("Draftline Password: ")
+# username = input("Draftline Username: ")
+# password = input("Draftline Password: ")
 
 ############################
 #Open Draftline & Log In
 ###########################
 driver = wb.Chrome()
 driver.get("https://www.draftlinesmartsystem.com")
-driver.find_element_by_id('main_LoginBox_tbEmail').send_keys(username)
-driver.find_element_by_id('main_LoginBox_tbPassword').send_keys(password)
+driver.find_element_by_id('main_LoginBox_tbEmail').send_keys('Terra@huppsigns.com')
+driver.find_element_by_id('main_LoginBox_tbPassword').send_keys('Hupp123')
 driver.find_element_by_id('main_LoginBox_btnLogin').click()
 
 
@@ -24,13 +24,18 @@ driver.find_element_by_id('main_LoginBox_btnLogin').click()
 ###########################
 
 base_url = 'https://www.draftlinesmartsystem.com/ReccuringTrips.aspx?id='
-df = pd.read_excel('recurring_trips.xlsx')
+df = pd.read_excel('cv_routes.xlsx')
 for index, row in df.iterrows():
 
-    tripID = str(round(row['Trip ID']))
-    title = row['Correct Name']
-    start = row['Correct Start Time']
-    end = row['Correct End Time']
+    tripID = str(round(row['TripID']))
+    title = row['Rte']
+    start = str(row['Start Time'])
+    end = str(row['End Time'])
+    primary = row['Primary Tech']
+    secondary = str(row['Secondary Tech'])
+    date = row['Effective Date']
+    dateChange = row['Date Change']
+    techChange = row['Tech Change']
 
     ############################
     #Updates Trip Title
@@ -50,8 +55,55 @@ for index, row in df.iterrows():
     driver.execute_script("document.getElementById('main_tbTimeFrom').value = " + "'" + start + "'" + ";");
     driver.execute_script("document.getElementById('main_tbTimeTo').value = " + "'" + end + "'" + ";");
 
+    ############################
+    #Changes Date Field
+    ###########################
 
-    driver.find_element_by_id('main_btnSave').click()
+    if dateChange == 'x':
+        driver.find_element_by_id('main_tbFromDate').clear()
+        driver.execute_script("document.getElementById('main_tbFromDate').value = " + "'" + date + "'" + ";");
+
+
+    ############################
+    #Remove Old Technician
+    ###########################
+    if techChange == 'x':
+        
+        if secondary != 'nan':
+            print(secondary)
+            print(type(secondary))
+            driver.find_element_by_xpath("//a[@title=\"Remove Technician\"]").click()
+            sleep(3)
+            driver.find_element_by_xpath("//a[@title=\"Remove Technician\"]").click()
+            sleep(3)
+            driver.find_element_by_id('main_tbTechniciansAutCompl').send_keys(primary)
+            sleep(3)
+            driver.find_element_by_link_text(primary).click()
+            sleep(3)
+            driver.find_element_by_id('main_tbTechniciansAutCompl').clear()
+            driver.find_element_by_id('main_tbTechniciansAutCompl').send_keys(secondary)
+            sleep(3)
+            driver.find_element_by_link_text(secondary).click()
+
+        else:
+            sleep(2)
+            driver.find_element_by_xpath("//a[@title=\"Remove Technician\"]").click()
+            sleep(3)
+            try:
+                driver.find_element_by_xpath("//a[@title=\"Remove Technician\"]").click()
+                sleep(3)
+            except:
+                print("No Second Tech to Remove")
+
+            driver.find_element_by_id('main_tbTechniciansAutCompl').send_keys(primary)
+            sleep(3)
+            driver.find_element_by_link_text(primary).click()
+            sleep(3)
+
+
+
+    sleep(2)
+    # driver.find_element_by_id('main_btnSave').click()
     driver.find_element_by_id('main_btnSave').click()
     sleep(4)
 
